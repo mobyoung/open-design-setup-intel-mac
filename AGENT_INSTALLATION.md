@@ -1,6 +1,8 @@
-# Open Design - Agent 安装指南
+# Open Design - Agent 安装指南 (Intel Mac)
 
-本文档为 AI Agent 提供自动化安装 Open Design 项目的指南。
+本文档为 AI Agent 提供自动化安装 Open Design 项目的指南（适用于 Intel Mac）。
+
+> **注意**: 本指南专门针对 Intel Mac 优化。Apple Silicon (M1/M2/M3) 用户请参考 [Open Design 主仓库](https://github.com/nexu-io/open-design)。
 
 ## 快速安装（一键脚本）
 

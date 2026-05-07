@@ -1,7 +1,8 @@
-# Open Design v3.0 - Release Notes
+# Open Design v3.0 - Release Notes (Intel Mac)
 
 **发布日期**: 2026-05-07  
-**版本代号**: Agent-Friendly Release
+**版本代号**: Agent-Friendly Release  
+**适用平台**: Intel Mac (x64)
 
 ---
 

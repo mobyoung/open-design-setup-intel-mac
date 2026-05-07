@@ -1,16 +1,18 @@
-# Open Design Setup
+# Open Design Setup (Intel Mac)
 
-Open Design 项目的安装脚本和 Agent 自动化部署指南。
+Open Design 项目的安装脚本和 Agent 自动化部署指南（适用于 Intel Mac）。
 
 ## 📦 包含内容
 
 | 文件 | 说明 |
 |------|------|
-| `install-open-design.command` | Open Design v3.0 安装脚本（支持自动版本检测） |
+| `install-open-design.command` | Open Design v3.0 安装脚本（支持自动版本检测，Intel Mac） |
 | `start-open-design.sh` | 快速启动脚本 |
 | `AGENT_INSTALLATION.md` | AI Agent 自动化安装指南 |
 | `INSTALLATION_GUIDE.md` | 用户安装指南（v3.0） |
 | `RELEASE_NOTES_v3.0.md` | v3.0 版本发布说明 |
+
+> **注意**: 本仓库的脚本和文档专门针对 **Intel Mac** 优化。如果你使用 Apple Silicon (M1/M2/M3)，请参考 [Open Design 主仓库](https://github.com/nexu-io/open-design)。
 
 ## 🚀 快速开始
 
@@ -46,7 +48,16 @@ chmod +x install-open-design.command
 
 - **Open Design 主仓库**: https://github.com/nexu-io/open-design
 - **Open Design 官网**: https://open-design.ai/
+- **Apple Silicon 版本**: 请访问 [Open Design 主仓库](https://github.com/nexu-io/open-design)
 - **问题反馈**: https://github.com/nexu-io/open-design/issues
+
+## ⚙️ 系统要求
+
+- **处理器**: Intel Core i5 或更高
+- **操作系统**: macOS 10.15 (Catalina) 或更高版本
+- **内存**: 8GB RAM 或更多
+- **存储**: 至少 5GB 可用空间
+- **依赖**: Git, Node.js 18+, pnpm
 
 ## 📄 许可证
 
