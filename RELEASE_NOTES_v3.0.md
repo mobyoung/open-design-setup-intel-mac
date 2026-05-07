@@ -135,15 +135,11 @@ cd open_design
 
 ---
 
-## 🙏 致谢
+## 📄 相关链接
 
-感谢所有为 Open Design 贡献代码、文档和反馈的开发者们！
-
----
-
-## 📄 完整更新日志
-
-查看 [CHANGELOG.md](CHANGELOG.md) 获取完整更新历史。
+- **本仓库**: https://github.com/mobyoung/open-design-setup-intel-mac
+- **Open Design 主仓库**: https://github.com/nexu-io/open-design
+- **Open Design CHANGELOG**: https://github.com/nexu-io/open-design/blob/main/CHANGELOG.md
 
 ---
 
