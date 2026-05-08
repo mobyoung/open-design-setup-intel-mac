@@ -7,19 +7,23 @@
 
 ---
 
-## [Unreleased]
+## [3.0.3] - 2026-05-08
+
+### 🔧 仓库清理与整合
+
+- **清理上游仓库残留** - 删除从上游克隆的不相关文件（apps/、packages/、tools/ 等），保留纯脚本仓库结构
+- **添加 .gitignore** - 忽略 .DS_Store、.tmp、.od/、.workbuddy/、node_modules/
+- **删除旧版启动脚本** - 移除 start-open-design.sh，保留功能更完善的 .command 版本
 
 ### 🐛 修复
+
 - **README 链接错误** - 修正下载链接 `open-design-setup` → `open-design-setup-intel-mac`
 - **文件名更新** - README 表格中 `start-open-design.sh` → `start-open-design.command`
 
 ### 📦 文件变更
-- `README.md` - 更新下载链接和文件列表
 
-### 计划功能
-- 添加中文 README
-- 添加 LICENSE 文件
-- 支持更多 Intel Mac 型号检测
+- `README.md` - 更新下载链接和文件列表，新增 stop-open-design.command 和 CHANGELOG.md
+- `CHANGELOG.md` - 新增文件，记录版本变更历史
 
 ---
 
@@ -116,12 +120,12 @@
 ```
 open-design-setup-intel-mac/
 ├── install-open-design.command    # 安装脚本 (v3.0)
-├── start-open-design.command      # 启动脚本
-├── stop-open-design.command       # 停止脚本
-├── CHANGELOG.md                  # 版本变更记录
-├── AGENT_INSTALLATION.md         # Agent 自动化安装指南
+├── start-open-design.command     # 启动脚本
+├── stop-open-design.command      # 停止脚本
+├── CHANGELOG.md                 # 版本变更记录
+├── AGENT_INSTALLATION.md        # Agent 自动化安装指南
 ├── INSTALLATION_GUIDE.md        # 用户安装指南 (v3.0)
-├── RELEASE_NOTES_v3.0.md       # 版本发布说明
+├── RELEASE_NOTES_v3.0.md        # 版本发布说明
 └── README.md                    # 项目说明文档
 ```
 
@@ -176,4 +180,4 @@ open-design-setup-intel-mac/
 ---
 
 **仓库地址**: https://github.com/mobyoung/open-design-setup-intel-mac  
-**最后更新**: 2026-05-07
+**最后更新**: 2026-05-08
