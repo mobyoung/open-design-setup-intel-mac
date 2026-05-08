@@ -9,6 +9,13 @@
 
 ## [Unreleased]
 
+### 🐛 修复
+- **README 链接错误** - 修正下载链接 `open-design-setup` → `open-design-setup-intel-mac`
+- **文件名更新** - README 表格中 `start-open-design.sh` → `start-open-design.command`
+
+### 📦 文件变更
+- `README.md` - 更新下载链接和文件列表
+
 ### 计划功能
 - 添加中文 README
 - 添加 LICENSE 文件
@@ -109,7 +116,9 @@
 ```
 open-design-setup-intel-mac/
 ├── install-open-design.command    # 安装脚本 (v3.0)
-├── start-open-design.sh          # 启动脚本
+├── start-open-design.command      # 启动脚本
+├── stop-open-design.command       # 停止脚本
+├── CHANGELOG.md                  # 版本变更记录
 ├── AGENT_INSTALLATION.md         # Agent 自动化安装指南
 ├── INSTALLATION_GUIDE.md        # 用户安装指南 (v3.0)
 ├── RELEASE_NOTES_v3.0.md       # 版本发布说明
