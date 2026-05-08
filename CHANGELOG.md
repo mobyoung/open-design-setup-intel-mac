@@ -19,11 +19,13 @@
 
 - **README 链接错误** - 修正下载链接 `open-design-setup` → `open-design-setup-intel-mac`
 - **文件名更新** - README 表格中 `start-open-design.sh` → `start-open-design.command`
+- **安装脚本缺失下载步骤** - `install-open-design.command` 新增从脚本仓库下载 `start-open-design.command` 和 `stop-open-design.command` 的步骤
 
 ### 📦 文件变更
 
 - `README.md` - 更新下载链接和文件列表，新增 stop-open-design.command 和 CHANGELOG.md
 - `CHANGELOG.md` - 新增文件，记录版本变更历史
+- `install-open-design.command` - 新增步骤 7 下载脚本文件
 
 ---
 
