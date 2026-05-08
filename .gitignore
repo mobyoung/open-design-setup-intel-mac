@@ -1,0 +1,15 @@
+# macOS system files
+.DS_Store
+
+# Open Design runtime files
+.od/
+.tmp/
+
+# WorkBuddy
+.workbuddy/
+
+# Logs
+*.log
+
+# Node
+node_modules/
