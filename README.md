@@ -8,6 +8,8 @@ Open Design 项目的安装脚本和 Agent 自动化部署指南（适用于 Int
 |------|------|
 | `install-open-design.command` | Open Design v3.0 安装脚本（支持自动版本检测，Intel Mac） |
 | `start-open-design.command` | 快速启动脚本 |
+| `stop-open-design.command` | 停止服务脚本 |
+| `CHANGELOG.md` | 版本变更记录 |
 | `AGENT_INSTALLATION.md` | AI Agent 自动化安装指南 |
 | `INSTALLATION_GUIDE.md` | 用户安装指南（v3.0） |
 | `RELEASE_NOTES_v3.0.md` | v3.0 版本发布说明 |
