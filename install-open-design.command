@@ -410,6 +410,32 @@ fi
 cd "$INSTALL_DIR"
 
 # ==================================================
+# 步骤 7：下载 Intel Mac 专用脚本
+# ==================================================
+print_step "步骤 7/10：下载 Intel Mac 专用脚本"
+
+SCRIPT_REPO="mobyoung/open-design-setup-intel-mac"
+SCRIPT_BASE="https://raw.githubusercontent.com/$SCRIPT_REPO/main"
+
+print_info "下载启动脚本..."
+if curl -fsSL "$SCRIPT_BASE/start-open-design.command" -o "$INSTALL_DIR/start-open-design.command"; then
+    chmod +x "$INSTALL_DIR/start-open-design.command"
+    print_success "启动脚本已下载"
+else
+    print_error "启动脚本下载失败"
+    exit 1
+fi
+
+print_info "下载停止脚本..."
+if curl -fsSL "$SCRIPT_BASE/stop-open-design.command" -o "$INSTALL_DIR/stop-open-design.command"; then
+    chmod +x "$INSTALL_DIR/stop-open-design.command"
+    print_success "停止脚本已下载"
+else
+    print_error "停止脚本下载失败"
+    exit 1
+fi
+
+# ==================================================
 # 步骤 8：安装依赖
 # ==================================================
 print_step "步骤 8/10：安装依赖（可能需要 5-10 分钟）"
@@ -451,16 +477,7 @@ print_info "配置固定端口："
 print_info "  - Daemon API: http://127.0.0.1:$DAEMON_PORT"
 print_info "  - Web 界面: http://127.0.0.1:$WEB_PORT"
 
-# 创建启动脚本
-print_info "创建启动脚本..."
-cat > "$INSTALL_DIR/start-open-design.sh" << EOL
-#!/bin/bash
-cd "$INSTALL_DIR"
-pnpm tools-dev start web --daemon-port $DAEMON_PORT --web-port $WEB_PORT
-EOL
-
-chmod +x "$INSTALL_DIR/start-open-design.sh"
-print_success "启动脚本已创建：$INSTALL_DIR/start-open-design.sh"
+print_success "启动脚本已下载：$INSTALL_DIR/start-open-design.command"
 
 # ==================================================
 # 步骤 10：创建管理脚本和桌面启动器
