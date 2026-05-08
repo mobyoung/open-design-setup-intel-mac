@@ -7,7 +7,7 @@ Open Design 项目的安装脚本和 Agent 自动化部署指南（适用于 Int
 | 文件 | 说明 |
 |------|------|
 | `install-open-design.command` | Open Design v3.0 安装脚本（支持自动版本检测，Intel Mac） |
-| `start-open-design.sh` | 快速启动脚本 |
+| `start-open-design.command` | 快速启动脚本 |
 | `AGENT_INSTALLATION.md` | AI Agent 自动化安装指南 |
 | `INSTALLATION_GUIDE.md` | 用户安装指南（v3.0） |
 | `RELEASE_NOTES_v3.0.md` | v3.0 版本发布说明 |
@@ -20,7 +20,7 @@ Open Design 项目的安装脚本和 Agent 自动化部署指南（适用于 Int
 
 ```bash
 # 下载并运行安装脚本
-curl -fsSL https://raw.githubusercontent.com/mobyoung/open-design-setup/main/install-open-design.command -o install-open-design.command
+curl -fsSL https://raw.githubusercontent.com/mobyoung/open-design-setup-intel-mac/main/install-open-design.command -o install-open-design.command
 chmod +x install-open-design.command
 ./install-open-design.command
 ```
