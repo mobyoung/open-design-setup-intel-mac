@@ -834,7 +834,7 @@ if [[ -d "$DESTOP_APP" ]]; then
 INFO
     
     # 创建启动脚本
-    cat > "$DESTOP_APP/Contents/MacOS/launcher" << LAUNCHER
+    cat > "$DESTOP_APP/Contents/MacOS/launcher" << 'LAUNCHER'
 #!/bin/bash
 
 # Open Design 桌面启动器
@@ -1087,7 +1087,7 @@ cat > "$DESTOP_APP/Contents/Info.plist" << 'PLIST'
 PLIST
 
 # 创建启动脚本
-cat > "$DESTOP_APP/Contents/MacOS/launcher" << EOL
+cat > "$DESTOP_APP/Contents/MacOS/launcher" << 'EOL'
 #!/bin/bash
 
 # Open Design 桌面启动器
@@ -1222,7 +1222,7 @@ done
 print_error "启动超时！"
 print_info "查看日志：$SCRIPT_DIR/.tmp/desktop-launcher.log"
 osascript -e 'display notification "启动超时，请查看日志！" with title "Open Design 启动失败"' 2>/dev/null
-
+EOL
 
 chmod +x "$DESTOP_APP/Contents/MacOS/launcher"
 
