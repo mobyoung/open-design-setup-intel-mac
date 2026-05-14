@@ -7,7 +7,7 @@
 
 ---
 
-## [3.0.3] - 2026-05-08
+## [3.0.3] - 2026-05-14
 
 ### 🔧 仓库清理与整合
 
@@ -20,6 +20,7 @@
 - **README 链接错误** - 修正下载链接 `open-design-setup` → `open-design-setup-intel-mac`
 - **文件名更新** - README 表格中 `start-open-design.sh` → `start-open-design.command`
 - **安装脚本缺失下载步骤** - `install-open-design.command` 新增从脚本仓库下载 `start-open-design.command` 和 `stop-open-design.command` 的步骤
+- **桌面启动器修复** - launcher 脚本改用 `desktop` 模式替代 `web` 模式，添加完整状态检查循环，等待服务真正启动后再打开浏览器
 
 ### 📦 文件变更
 
