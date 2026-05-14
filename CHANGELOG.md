@@ -11,7 +11,9 @@
 
 ### 🐛 修复
 
-- **桌面启动器路径硬编码** - `launcher` 脚本内 `SCRIPT_DIR` 写死为 `mobyoung` 的路径，改为通过 `${BASH_SOURCE[0]}` 动态获取，兼容其他用户安装目录
+- **桌面启动器路径硬编码** - `launcher` 脚本内 `SCRIPT_DIR` 写死为 `mobyoung` 的路径，改为通过 `${BASH_SOURCE[0]}` 动态获取，并支持 `.app` bundle 内运行
+- **install-open-design.command 内的 launcher heredoc** - 安装脚本创建的桌面启动器同样使用动态路径检测，修复换电脑后无法启动的问题
+- **升级脚本内的 launcher heredoc** - `update-open-design.command` 中的桌面启动器同样更新为动态路径检测
 - **构建检查 $? 时机错误** - 原逻辑中 `[[ $? -ne 0 ]]` 检查的是 `mkdir` 而非 `pnpm build` 的退出码，改为 `BUILD_STATUS=$?` 显式保存
 - **构建判断仅检查目录** - 原逻辑 `[[ ! -d "dist/main" ]]` 无法区分空目录和有内容的目录，改为精确检查 `dist/main/index.js` 文件是否存在
 - **构建失败显示 exit code** - 出错时显示具体退出码，便于排查

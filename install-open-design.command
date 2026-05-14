@@ -841,37 +841,46 @@ INFO
 # 功能：启动 Open Design 服务，显示系统通知
 
 # 颜色定义
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+RED='[0;31m'
+GREEN='[0;32m'
+YELLOW='[1;33m'
+BLUE='[0;34m'
+NC='[0m'
 
 # 固定端口配置（与安装脚本一致）
 DAEMON_PORT=3000
 WEB_PORT=3001
 
 print_info() {
-    echo -e "\${BLUE}[INFO]\${NC} $1"
+    echo -e "${BLUE}[INFO]${NC} $1"
 }
 
 print_success() {
-    echo -e "\${GREEN}[SUCCESS]\${NC} $1"
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
 
 print_warning() {
-    echo -e "\${YELLOW}[WARNING]\${NC} $1"
+    echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
 print_error() {
-    echo -e "\${RED}[ERROR]\${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# 获取安装目录
-SCRIPT_DIR="$INSTALL_DIR"
+# 获取脚本所在目录
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# 判断是否在 .app bundle 内运行
+# bundle 结构：xxx.app/Contents/MacOS/launcher
+# 需要向上找三层到达 .app 所在目录（即安装目录）
+APPBundle_PATH="$( echo "$SCRIPT_DIR" | grep -o '.*\.app' | head -1 )"
+if [[ -n "$APPBundle_PATH" && "$SCRIPT_DIR" == "$APPBundle_PATH/Contents/MacOS" ]]; then
+    # 在 .app bundle 内，bundle 所在目录即为安装目录
+    SCRIPT_DIR="$( dirname "$APPBundle_PATH" )"
+fi
 
 # 显示启动通知
-osascript -e 'display notification "正在启动 Open Design..." with title "Open Design"'
+osascript -e 'display notification "正在启动 Open Design..." with title "Open Design"' 2>/dev/null
 
 # 检查是否是安装目录
 if [[ ! -f "$SCRIPT_DIR/pnpm-workspace.yaml" ]]; then
@@ -896,15 +905,15 @@ if echo "$STATUS_OUTPUT" | grep -E "namespace default" | grep -v "not-running" |
     exit 0
 fi
 
-# 检查 desktop 构建
+# 检查 desktop 构建（检查 dist/main/index.js 而非仅目录）
 print_info "检查桌面应用构建状态..."
-
-if [[ ! -d "$SCRIPT_DIR/apps/desktop/dist/main" ]]; then
+if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
     print_info "桌面应用未构建，正在构建..."
     pnpm --filter @open-design/desktop build
+    BUILD_STATUS=$?
 
-    if [[ $? -ne 0 ]]; then
-        print_error "桌面应用构建失败！"
+    if [[ $BUILD_STATUS -ne 0 ]]; then
+        print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
         osascript -e 'display notification "桌面应用构建失败！" with title "Open Design 启动失败"' 2>/dev/null
         exit 1
     fi
@@ -961,6 +970,7 @@ print_error "启动超时！"
 print_info "查看日志：$SCRIPT_DIR/.tmp/desktop-launcher.log"
 osascript -e 'display notification "启动超时，请查看日志！" with title "Open Design 启动失败"' 2>/dev/null
 LAUNCHER
+
     
     chmod +x "$DESTOP_APP/Contents/MacOS/launcher"
     
@@ -1084,70 +1094,79 @@ cat > "$DESTOP_APP/Contents/MacOS/launcher" << EOL
 # 功能：启动 Open Design 服务，显示系统通知
 
 # 颜色定义
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+RED='[0;31m'
+GREEN='[0;32m'
+YELLOW='[1;33m'
+BLUE='[0;34m'
+NC='[0m'
 
 # 固定端口配置（与安装脚本一致）
 DAEMON_PORT=3000
 WEB_PORT=3001
 
 print_info() {
-    echo -e "\${BLUE}[INFO]\${NC} $1"
+    echo -e "${BLUE}[INFO]${NC} $1"
 }
 
 print_success() {
-    echo -e "\${GREEN}[SUCCESS]\${NC} $1"
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
 
 print_warning() {
-    echo -e "\${YELLOW}[WARNING]\${NC} $1"
+    echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
 print_error() {
-    echo -e "\${RED}[ERROR]\${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# 获取安装目录
-SCRIPT_DIR="$INSTALL_DIR"
+# 获取脚本所在目录
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# 判断是否在 .app bundle 内运行
+# bundle 结构：xxx.app/Contents/MacOS/launcher
+# 需要向上找三层到达 .app 所在目录（即安装目录）
+APPBundle_PATH="$( echo "$SCRIPT_DIR" | grep -o '.*\.app' | head -1 )"
+if [[ -n "$APPBundle_PATH" && "$SCRIPT_DIR" == "$APPBundle_PATH/Contents/MacOS" ]]; then
+    # 在 .app bundle 内，bundle 所在目录即为安装目录
+    SCRIPT_DIR="$( dirname "$APPBundle_PATH" )"
+fi
 
 # 显示启动通知
 osascript -e 'display notification "正在启动 Open Design..." with title "Open Design"' 2>/dev/null
 
 # 检查是否是安装目录
-if [[ ! -f "\$SCRIPT_DIR/pnpm-workspace.yaml" ]]; then
+if [[ ! -f "$SCRIPT_DIR/pnpm-workspace.yaml" ]]; then
     print_error "未检测到 Open Design 安装目录！"
     osascript -e 'display notification "未找到 Open Design 安装目录！" with title "Open Design 启动失败"' 2>/dev/null
     exit 1
 fi
 
-print_info "安装目录：\$SCRIPT_DIR"
-cd "\$SCRIPT_DIR"
+print_info "安装目录：$SCRIPT_DIR"
+cd "$SCRIPT_DIR"
 
 # 检查服务状态
 print_info "检查服务状态..."
-STATUS_OUTPUT=\$(pnpm tools-dev status 2>&1)
+STATUS_OUTPUT=$(pnpm tools-dev status 2>&1)
 
 # 检查是否真正在运行（排除 not-running）
-if echo "\$STATUS_OUTPUT" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
+if echo "$STATUS_OUTPUT" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
     print_warning "检测到服务已在运行！"
     print_info "正在打开浏览器..."
-    open "http://127.0.0.1:\$WEB_PORT"
+    open "http://127.0.0.1:$WEB_PORT"
     osascript -e 'display notification "已打开浏览器界面" with title "Open Design"' 2>/dev/null
     exit 0
 fi
 
-# 检查 desktop 构建
+# 检查 desktop 构建（检查 dist/main/index.js 而非仅目录）
 print_info "检查桌面应用构建状态..."
-
-if [[ ! -d "\$SCRIPT_DIR/apps/desktop/dist/main" ]]; then
+if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
     print_info "桌面应用未构建，正在构建..."
     pnpm --filter @open-design/desktop build
+    BUILD_STATUS=$?
 
-    if [[ \$? -ne 0 ]]; then
-        print_error "桌面应用构建失败！"
+    if [[ $BUILD_STATUS -ne 0 ]]; then
+        print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
         osascript -e 'display notification "桌面应用构建失败！" with title "Open Design 启动失败"' 2>/dev/null
         exit 1
     fi
@@ -1157,11 +1176,11 @@ fi
 print_info "启动 Open Design 服务..."
 
 # 创建日志目录
-mkdir -p "\$SCRIPT_DIR/.tmp"
-cd "\$SCRIPT_DIR"
+mkdir -p "$SCRIPT_DIR/.tmp"
+cd "$SCRIPT_DIR"
 
 # 启动服务并立即返回（后台运行）
-pnpm tools-dev start desktop --daemon-port \$DAEMON_PORT --web-port \$WEB_PORT > "\$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
+pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT > "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
 
 print_success "启动命令已执行"
 print_info "等待服务启动..."
@@ -1169,15 +1188,15 @@ print_info "等待服务启动..."
 # 等待服务就绪
 MAX_WAIT=90
 WAIT_COUNT=0
-while [ \$WAIT_COUNT -lt \$MAX_WAIT ]; do
+while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
     sleep 2
-    WAIT_COUNT=\$((WAIT_COUNT + 2))
+    WAIT_COUNT=$((WAIT_COUNT + 2))
 
-    STATUS=\$(cd "\$SCRIPT_DIR" && pnpm tools-dev status 2>&1)
+    STATUS=$(cd "$SCRIPT_DIR" && pnpm tools-dev status 2>&1)
 
     # 检查是否真正在运行（排除 not-running）
-    if echo "\$STATUS" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
-        WEB_URL="http://127.0.0.1:\$WEB_PORT"
+    if echo "$STATUS" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
+        WEB_URL="http://127.0.0.1:$WEB_PORT"
 
         echo ""
         print_success "✅ Open Design 启动成功！"
@@ -1185,7 +1204,7 @@ while [ \$WAIT_COUNT -lt \$MAX_WAIT ]; do
 
         # 打开浏览器
         print_info "打开浏览器..."
-        open "\$WEB_URL"
+        open "$WEB_URL"
 
         # 显示成功通知
         osascript -e 'display notification "Open Design 已启动！Web 界面已打开。" with title "Open Design"' 2>/dev/null
@@ -1194,16 +1213,16 @@ while [ \$WAIT_COUNT -lt \$MAX_WAIT ]; do
     fi
 
     # 每 10 秒显示一次等待状态
-    if [ \$((WAIT_COUNT % 10)) -eq 0 ]; then
-        print_info "等待中... (\$WAIT_COUNT/\$MAX_WAIT 秒)"
+    if [ $((WAIT_COUNT % 10)) -eq 0 ]; then
+        print_info "等待中... ($WAIT_COUNT/$MAX_WAIT 秒)"
     fi
 done
 
 # 超时处理
 print_error "启动超时！"
-print_info "查看日志：\$SCRIPT_DIR/.tmp/desktop-launcher.log"
+print_info "查看日志：$SCRIPT_DIR/.tmp/desktop-launcher.log"
 osascript -e 'display notification "启动超时，请查看日志！" with title "Open Design 启动失败"' 2>/dev/null
-EOL
+
 
 chmod +x "$DESTOP_APP/Contents/MacOS/launcher"
 
