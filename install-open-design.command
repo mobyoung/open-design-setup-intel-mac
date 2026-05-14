@@ -914,7 +914,7 @@ if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
 
     if [[ $BUILD_STATUS -ne 0 ]]; then
         print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
-        osascript -e 'display notification "桌面应用构建失败！" with title "Open Design 启动失败"' 2>/dev/null
+        osascript -e 'display notification "桌面应用构建失败！（exit code: $BUILD_STATUS）" with title "Open Design 启动失败"' 2>/dev/null
         exit 1
     fi
 fi
@@ -1167,7 +1167,7 @@ if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
 
     if [[ $BUILD_STATUS -ne 0 ]]; then
         print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
-        osascript -e 'display notification "桌面应用构建失败！" with title "Open Design 启动失败"' 2>/dev/null
+        osascript -e 'display notification "桌面应用构建失败！（exit code: $BUILD_STATUS）" with title "Open Design 启动失败"' 2>/dev/null
         exit 1
     fi
 fi
