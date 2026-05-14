@@ -33,6 +33,15 @@ print_error() {
 # 获取脚本所在目录
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# 判断是否在 .app bundle 内运行
+# bundle 结构：xxx.app/Contents/MacOS/launcher
+# 需要向上找三层到达 .app 所在目录（即安装目录）
+APPBundle_PATH="$( echo "$SCRIPT_DIR" | grep -o '.*\.app' | head -1 )"
+if [[ -n "$APPBundle_PATH" && "$SCRIPT_DIR" == "$APPBundle_PATH/Contents/MacOS" ]]; then
+    # 在 .app bundle 内，bundle 所在目录即为安装目录
+    SCRIPT_DIR="$( dirname "$APPBundle_PATH" )"
+fi
+
 # 检查是否是安装目录
 if [[ ! -f "$SCRIPT_DIR/pnpm-workspace.yaml" ]]; then
     print_error "未检测到 Open Design 安装目录！"
@@ -80,15 +89,15 @@ if echo "$STATUS_OUTPUT" | grep -E "namespace default" | grep -v "not-running" |
     exit 0
 fi
 
-# 检查 desktop 构建
+# 检查 desktop 构建（检查 dist/main/index.js 而非仅目录）
 print_info "检查桌面应用构建状态..."
-
-if [[ ! -d "$SCRIPT_DIR/apps/desktop/dist/main" ]]; then
+if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
     print_info "桌面应用未构建，正在构建..."
     pnpm --filter @open-design/desktop build
+    BUILD_STATUS=$?
 
-    if [[ $? -ne 0 ]]; then
-        print_error "桌面应用构建失败！"
+    if [[ $BUILD_STATUS -ne 0 ]]; then
+        print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
         osascript -e 'display notification "桌面应用构建失败！" with title "Open Design 启动失败"' 2>/dev/null
         exit 1
     fi
