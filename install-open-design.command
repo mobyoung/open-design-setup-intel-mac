@@ -560,7 +560,7 @@ print_step "步骤 1/5：停止 Open Design 服务"
 
 if [[ -f "$SCRIPT_DIR/pnpm-workspace.yaml" ]]; then
     print_info "正在停止服务..."
-    cd "$SCRIPT_DIR" && pnpm tools-dev stop 2>/dev/null || true
+    cd "$SCRIPT_DIR" && /usr/local/bin/pnpm tools-dev stop 2>/dev/null || true
     print_success "服务已停止"
 else
     print_info "跳过服务停止（未找到项目文件）"
@@ -715,10 +715,10 @@ print_step "步骤 1/6：检查服务状态"
 cd "$SCRIPT_DIR"
 
 # 检查服务是否正在运行
-if pnpm tools-dev status 2>/dev/null | grep -q "running"; then
+if /usr/local/bin/pnpm tools-dev status 2>/dev/null | grep -q "running"; then
     print_warning "检测到 Open Design 服务正在运行"
     print_info "升级前需要停止服务..."
-    pnpm tools-dev stop
+    /usr/local/bin/pnpm tools-dev stop
     sleep 2
     print_success "服务已停止"
     SERVICE_WAS_RUNNING=true
@@ -943,7 +943,7 @@ cd "$SCRIPT_DIR"
 
 # 检查服务状态
 print_info "检查服务状态..."
-STATUS_OUTPUT=$(pnpm tools-dev status 2>&1)
+STATUS_OUTPUT=$(/usr/local/bin/pnpm tools-dev status 2>&1)
 
 # 检查是否真正在运行（排除 not-running）
 if echo "$STATUS_OUTPUT" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
@@ -970,10 +970,10 @@ mkdir -p "$SCRIPT_DIR/.tmp"
 cd "$SCRIPT_DIR"
 
 # 启动服务并立即返回（后台运行）
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动命令: pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT" > "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动命令: /usr/local/bin/pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT" > "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 工作目录: $(pwd)" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] PATH: $PATH" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
-pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
+/usr/local/bin/pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
 LAUNCH_PID=$!
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动PID: $LAUNCH_PID" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 
@@ -987,7 +987,7 @@ while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
     sleep 2
     WAIT_COUNT=$((WAIT_COUNT + 2))
 
-    STATUS=$(cd "$SCRIPT_DIR" && pnpm tools-dev status 2>&1)
+    STATUS=$(cd "$SCRIPT_DIR" && /usr/local/bin/pnpm tools-dev status 2>&1)
 
     # 每 10 秒记录一次状态到日志
     if [ $((WAIT_COUNT % 10)) -eq 0 ]; then
@@ -1050,18 +1050,18 @@ print_step "步骤 6/6：重启服务"
 
 if [[ "$SERVICE_WAS_RUNNING" == true ]]; then
     print_info "正在重新启动服务..."
-    pnpm tools-dev start web --daemon-port 3000 --web-port 3001 > /dev/null 2>&1 &
+    /usr/local/bin/pnpm tools-dev start web --daemon-port 3000 --web-port 3001 > /dev/null 2>&1 &
     
     print_info "等待服务启动（5 秒）..."
     sleep 5
     
     # 检查服务状态
-    if pnpm tools-dev status 2>/dev/null | grep -q "running"; then
+    if /usr/local/bin/pnpm tools-dev status 2>/dev/null | grep -q "running"; then
         print_success "服务已重新启动"
         print_info "Web 界面：http://127.0.0.1:3001"
     else
         print_warning "服务可能未正常启动"
-        print_info "请手动启动：cd $SCRIPT_DIR && pnpm tools-dev start web --daemon-port 3000 --web-port 3001"
+        print_info "请手动启动：cd $SCRIPT_DIR && /usr/local/bin/pnpm tools-dev start web --daemon-port 3000 --web-port 3001"
     fi
 else
     print_info "服务未自动启动（升级前未运行）"
@@ -1088,9 +1088,9 @@ echo "   2. 等待 5-10 秒"
 echo "   3. 浏览器会自动打开 http://127.0.0.1:3001"
 echo ""
 print_info "🛠️  管理命令："
-echo "   - 查看状态：cd $SCRIPT_DIR && pnpm tools-dev status"
-echo "   - 停止服务：cd $SCRIPT_DIR && pnpm tools-dev stop"
-echo "   - 查看日志：cd $SCRIPT_DIR && pnpm tools-dev logs"
+echo "   - 查看状态：cd $SCRIPT_DIR && /usr/local/bin/pnpm tools-dev status"
+echo "   - 停止服务：cd $SCRIPT_DIR && /usr/local/bin/pnpm tools-dev stop"
+echo "   - 查看日志：cd $SCRIPT_DIR && /usr/local/bin/pnpm tools-dev logs"
 echo ""
 print_warning "注意：如果启动失败，备份数据在：$BACKUP_DIR"
 echo ""
@@ -1238,7 +1238,7 @@ cd "$SCRIPT_DIR"
 
 # 检查服务状态
 print_info "检查服务状态..."
-STATUS_OUTPUT=$(pnpm tools-dev status 2>&1)
+STATUS_OUTPUT=$(/usr/local/bin/pnpm tools-dev status 2>&1)
 
 # 检查是否真正在运行（排除 not-running）
 if echo "$STATUS_OUTPUT" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
@@ -1265,10 +1265,10 @@ mkdir -p "$SCRIPT_DIR/.tmp"
 cd "$SCRIPT_DIR"
 
 # 启动服务并立即返回（后台运行）
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动命令: pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT" > "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动命令: /usr/local/bin/pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT" > "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 工作目录: $(pwd)" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] PATH: $PATH" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
-pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
+/usr/local/bin/pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
 LAUNCH_PID=$!
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动PID: $LAUNCH_PID" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 
@@ -1282,7 +1282,7 @@ while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
     sleep 2
     WAIT_COUNT=$((WAIT_COUNT + 2))
 
-    STATUS=$(cd "$SCRIPT_DIR" && pnpm tools-dev status 2>&1)
+    STATUS=$(cd "$SCRIPT_DIR" && /usr/local/bin/pnpm tools-dev status 2>&1)
 
     # 每 10 秒记录一次状态到日志
     if [ $((WAIT_COUNT % 10)) -eq 0 ]; then
@@ -1379,9 +1379,9 @@ echo "   2. 等待 5-10 秒"
 echo "   3. 浏览器会自动打开 http://127.0.0.1:$WEB_PORT"
 echo ""
 print_info "🛠️  管理命令："
-echo "   - 查看状态：cd $INSTALL_DIR && pnpm tools-dev status"
-echo "   - 停止服务：cd $INSTALL_DIR && pnpm tools-dev stop"
-echo "   - 查看日志：cd $INSTALL_DIR && pnpm tools-dev logs"
+echo "   - 查看状态：cd $INSTALL_DIR && /usr/local/bin/pnpm tools-dev status"
+echo "   - 停止服务：cd $INSTALL_DIR && /usr/local/bin/pnpm tools-dev stop"
+echo "   - 查看日志：cd $INSTALL_DIR && /usr/local/bin/pnpm tools-dev logs"
 echo ""
 print_info "🗑️  卸载和升级："
 echo "   - 卸载脚本：$INSTALL_DIR/uninstall-open-design.command"
