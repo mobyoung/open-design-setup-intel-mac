@@ -787,6 +787,23 @@ fi
 
 print_success "依赖已更新"
 
+# 构建桌面应用
+cd "$SCRIPT_DIR"
+print_info "检查桌面应用构建状态..."
+if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
+    print_info "桌面应用未构建，正在构建..."
+    pnpm --filter @open-design/desktop build
+    BUILD_STATUS=$?
+    if [[ $BUILD_STATUS -ne 0 ]]; then
+        print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
+        print_info "请确保已安装所有依赖后重新运行安装脚本"
+        exit 1
+    fi
+    print_success "桌面应用构建成功"
+else
+    print_info "桌面应用已构建，跳过"
+fi
+
 # 步骤 5：更新桌面启动器
 print_step "步骤 5/6：更新桌面启动器"
 
@@ -916,15 +933,9 @@ fi
 # 检查 desktop 构建（检查 dist/main/index.js 而非仅目录）
 print_info "检查桌面应用构建状态..."
 if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
-    print_info "桌面应用未构建，正在构建..."
-    pnpm --filter @open-design/desktop build
-    BUILD_STATUS=$?
-
-    if [[ $BUILD_STATUS -ne 0 ]]; then
-        print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
-        osascript -e 'display notification "桌面应用构建失败！（exit code: $BUILD_STATUS）" with title "Open Design 启动失败"' 2>/dev/null
-        exit 1
-    fi
+    print_error "桌面应用未构建，请重新运行安装脚本完成构建！"
+    osascript -e 'display notification "桌面应用未构建，请重新运行安装脚本！" with title "Open Design 启动失败"' 2>/dev/null
+    exit 1
 fi
 
 # 启动服务（desktop 模式）
@@ -1049,7 +1060,23 @@ EOL
 chmod +x "$INSTALL_DIR/update-open-design.command"
 print_success "升级脚本已创建：$INSTALL_DIR/update-open-design.command"
 
-# 10.3 创建桌面启动器
+# 10.3 构建桌面应用
+print_info "构建桌面应用..."
+cd "$INSTALL_DIR"
+if [[ ! -f "$INSTALL_DIR/apps/desktop/dist/main/index.js" ]]; then
+    pnpm --filter @open-design/desktop build
+    BUILD_STATUS=$?
+    if [[ $BUILD_STATUS -ne 0 ]]; then
+        print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
+        print_info "请确保已安装所有依赖后重新运行安装脚本"
+        exit 1
+    fi
+    print_success "桌面应用构建成功"
+else
+    print_info "桌面应用已构建，跳过"
+fi
+
+# 10.4 创建桌面启动器
 print_info "创建桌面启动器..."
 DESTOP_APP="$HOME/Desktop/Open Design.app"
 
@@ -1177,15 +1204,9 @@ fi
 # 检查 desktop 构建（检查 dist/main/index.js 而非仅目录）
 print_info "检查桌面应用构建状态..."
 if [[ ! -f "$SCRIPT_DIR/apps/desktop/dist/main/index.js" ]]; then
-    print_info "桌面应用未构建，正在构建..."
-    pnpm --filter @open-design/desktop build
-    BUILD_STATUS=$?
-
-    if [[ $BUILD_STATUS -ne 0 ]]; then
-        print_error "桌面应用构建失败！（exit code: $BUILD_STATUS）"
-        osascript -e 'display notification "桌面应用构建失败！（exit code: $BUILD_STATUS）" with title "Open Design 启动失败"' 2>/dev/null
-        exit 1
-    fi
+    print_error "桌面应用未构建，请重新运行安装脚本完成构建！"
+    osascript -e 'display notification "桌面应用未构建，请重新运行安装脚本！" with title "Open Design 启动失败"' 2>/dev/null
+    exit 1
 fi
 
 # 启动服务（desktop 模式）
