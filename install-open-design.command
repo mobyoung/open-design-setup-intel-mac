@@ -870,13 +870,21 @@ print_error() {
 # 获取脚本所在目录
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# 判断是否在 .app bundle 内运行
-# bundle 结构：xxx.app/Contents/MacOS/launcher
-# 需要向上找三层到达 .app 所在目录（即安装目录）
-APPBundle_PATH="$( echo "$SCRIPT_DIR" | grep -o '.*\.app' | head -1 )"
-if [[ -n "$APPBundle_PATH" && "$SCRIPT_DIR" == "$APPBundle_PATH/Contents/MacOS" ]]; then
-    # 在 .app bundle 内，bundle 所在目录即为安装目录
-    SCRIPT_DIR="$( dirname "$APPBundle_PATH" )"
+# 优先从配置文件读取安装目录
+CONFIG_FILE="$HOME/.open_design_install_dir"
+if [[ -f "$CONFIG_FILE" ]]; then
+    INSTALL_DIR_FROM_CONFIG="$(cat "$CONFIG_FILE" | tr -d '\n')"
+    if [[ -n "$INSTALL_DIR_FROM_CONFIG" && -f "$INSTALL_DIR_FROM_CONFIG/pnpm-workspace.yaml" ]]; then
+        SCRIPT_DIR="$INSTALL_DIR_FROM_CONFIG"
+    fi
+fi
+
+# 如果配置文件无效，尝试使用 .app bundle 检测
+if [[ ! -f "$SCRIPT_DIR/pnpm-workspace.yaml" ]]; then
+    APPBundle_PATH="$( echo "$SCRIPT_DIR" | grep -o '.*\.app' | head -1 )"
+    if [[ -n "$APPBundle_PATH" && "$SCRIPT_DIR" == "$APPBundle_PATH/Contents/MacOS" ]]; then
+        SCRIPT_DIR="$( dirname "$APPBundle_PATH" )"
+    fi
 fi
 
 # 显示启动通知
@@ -1123,13 +1131,21 @@ print_error() {
 # 获取脚本所在目录
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# 判断是否在 .app bundle 内运行
-# bundle 结构：xxx.app/Contents/MacOS/launcher
-# 需要向上找三层到达 .app 所在目录（即安装目录）
-APPBundle_PATH="$( echo "$SCRIPT_DIR" | grep -o '.*\.app' | head -1 )"
-if [[ -n "$APPBundle_PATH" && "$SCRIPT_DIR" == "$APPBundle_PATH/Contents/MacOS" ]]; then
-    # 在 .app bundle 内，bundle 所在目录即为安装目录
-    SCRIPT_DIR="$( dirname "$APPBundle_PATH" )"
+# 优先从配置文件读取安装目录
+CONFIG_FILE="$HOME/.open_design_install_dir"
+if [[ -f "$CONFIG_FILE" ]]; then
+    INSTALL_DIR_FROM_CONFIG="$(cat "$CONFIG_FILE" | tr -d '\n')"
+    if [[ -n "$INSTALL_DIR_FROM_CONFIG" && -f "$INSTALL_DIR_FROM_CONFIG/pnpm-workspace.yaml" ]]; then
+        SCRIPT_DIR="$INSTALL_DIR_FROM_CONFIG"
+    fi
+fi
+
+# 如果配置文件无效，尝试使用 .app bundle 检测
+if [[ ! -f "$SCRIPT_DIR/pnpm-workspace.yaml" ]]; then
+    APPBundle_PATH="$( echo "$SCRIPT_DIR" | grep -o '.*\.app' | head -1 )"
+    if [[ -n "$APPBundle_PATH" && "$SCRIPT_DIR" == "$APPBundle_PATH/Contents/MacOS" ]]; then
+        SCRIPT_DIR="$( dirname "$APPBundle_PATH" )"
+    fi
 fi
 
 # 显示启动通知
@@ -1225,6 +1241,11 @@ osascript -e 'display notification "启动超时，请查看日志！" with titl
 EOL
 
 chmod +x "$DESTOP_APP/Contents/MacOS/launcher"
+
+# 保存安装目录配置（供launcher读取）
+CONFIG_FILE="$HOME/.open_design_install_dir"
+echo "$INSTALL_DIR" > "$CONFIG_FILE"
+print_info "安装目录配置已保存"
 
 # 复制图标
 if [[ -f "$INSTALL_DIR/tools/pack/resources/mac/icon.icns" ]]; then
