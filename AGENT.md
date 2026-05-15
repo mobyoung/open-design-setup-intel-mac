@@ -11,15 +11,15 @@
 **用户**: boboyoung (mobyoung)，广州易识科技前端开发者  
 **平台**: macOS Intel (x64)，本地开发环境
 
-### 三个并行项目
+### 项目关系
 
-本仓库只是其中一个。用户同时推进以下三个方向：
+| 层级 | 说明 |
+|------|------|
+| **Open Design（上游）** | https://github.com/nexu-io/open-design — 主项目，daemon + web sidecar 架构 |
+| **本仓库（安装器）** | https://github.com/mobyoung/open-design-setup-intel-mac — Intel Mac 安装/启动脚本 |
+| **安装后产物** | `~/Documents/open_design/`（默认路径）— 安装脚本将 Open Design 部署到此目录 |
 
-| 项目 | 路径 | 用途 |
-|------|------|------|
-| **installer 脚本** (本仓库) | `open-design-setup-intel-mac` | Intel Mac 一键安装 Open Design |
-| **Open Design 源码** | `~/Documents/Claw_AI/open_design` | daemon + web sidecar 架构的开发环境 |
-| **AI 进化树** | `AI_Development` (私有) | 展示 2022.12–2026.4 AI 技术演进的可视化项目 |
+本仓库不包含 Open Design 源码，只负责在 Intel Mac 上一键完成安装、依赖部署、创建桌面启动器。
 
 ---
 
@@ -197,8 +197,6 @@ launcher 只做桥接：**找到安装目录 → `open start-open-design.command
 
 ### UI/UX 要求（精细级别）
 - 间距、字号、交互反馈必须精确
-- 暗黑科技 + 液态玻璃风格偏好（AI进化树项目参考）
-- Electron / 桌面应用需要状态检查和进度反馈
 
 ### 工作流触发
 | 用户说 | 触发操作 |
