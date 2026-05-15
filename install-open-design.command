@@ -489,6 +489,14 @@ print_info "创建卸载脚本..."
 cat > "$INSTALL_DIR/uninstall-open-design.command" << 'EOL'
 #!/bin/bash
 
+# 加载用户环境变量（确保 pnpm 在 PATH 中）
+export PATH="$HOME/.local/bin:$PATH"
+for _profile in "$HOME/.zshrc" "$HOME/.bash_profile" "$HOME/.bashrc" "$HOME/.profile"; do
+    if [[ -f "$_profile" ]]; then
+        source "$_profile" 2>/dev/null
+    fi
+done
+
 # 获取脚本所在目录（即安装目录）
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -641,6 +649,14 @@ print_success "卸载脚本已创建：$INSTALL_DIR/uninstall-open-design.comman
 print_info "创建升级脚本..."
 cat > "$INSTALL_DIR/update-open-design.command" << 'EOL'
 #!/bin/bash
+
+# 加载用户环境变量（确保 pnpm 在 PATH 中）
+export PATH="$HOME/.local/bin:$PATH"
+for _profile in "$HOME/.zshrc" "$HOME/.bash_profile" "$HOME/.bashrc" "$HOME/.profile"; do
+    if [[ -f "$_profile" ]]; then
+        source "$_profile" 2>/dev/null
+    fi
+done
 
 # 获取脚本所在目录（即安装目录）
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -884,6 +900,14 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# 加载用户环境变量（确保 pnpm 在 PATH 中）
+export PATH="$HOME/.local/bin:$PATH"
+for _profile in "$HOME/.zshrc" "$HOME/.bash_profile" "$HOME/.bashrc" "$HOME/.profile"; do
+    if [[ -f "$_profile" ]]; then
+        source "$_profile" 2>/dev/null
+    fi
+done
+
 # 获取脚本所在目录
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -946,7 +970,12 @@ mkdir -p "$SCRIPT_DIR/.tmp"
 cd "$SCRIPT_DIR"
 
 # 启动服务并立即返回（后台运行）
-pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT > "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动命令: pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT" > "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 工作目录: $(pwd)" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] PATH: $PATH" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
+LAUNCH_PID=$!
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动PID: $LAUNCH_PID" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 
 print_success "启动命令已执行"
 print_info "等待服务启动..."
@@ -959,6 +988,11 @@ while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
     WAIT_COUNT=$((WAIT_COUNT + 2))
 
     STATUS=$(cd "$SCRIPT_DIR" && pnpm tools-dev status 2>&1)
+
+    # 每 10 秒记录一次状态到日志
+    if [ $((WAIT_COUNT % 10)) -eq 0 ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 状态检查 #$WAIT_COUNT: $STATUS" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+    fi
 
     # 检查是否真正在运行（排除 not-running）
     if echo "$STATUS" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
@@ -987,6 +1021,12 @@ done
 # 超时处理
 print_error "启动超时！"
 print_info "查看日志：$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动超时，WAIT_COUNT=$WAIT_COUNT" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 检查后台进程..." >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+ps aux | grep -i "open.design\|tools-dev\|desktop" | grep -v grep >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 检查端口 $DAEMON_PORT 和 $WEB_PORT..." >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+lsof -ti :$DAEMON_PORT 2>/dev/null && echo "daemon端口忙碌" || echo "daemon端口空闲" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+lsof -ti :$WEB_PORT 2>/dev/null && echo "web端口忙碌" || echo "web端口空闲" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 osascript -e 'display notification "启动超时，请查看日志！" with title "Open Design 启动失败"' 2>/dev/null
 LAUNCHER
 
@@ -1155,6 +1195,14 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# 加载用户环境变量（确保 pnpm 在 PATH 中）
+export PATH="$HOME/.local/bin:$PATH"
+for _profile in "$HOME/.zshrc" "$HOME/.bash_profile" "$HOME/.bashrc" "$HOME/.profile"; do
+    if [[ -f "$_profile" ]]; then
+        source "$_profile" 2>/dev/null
+    fi
+done
+
 # 获取脚本所在目录
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -1217,7 +1265,12 @@ mkdir -p "$SCRIPT_DIR/.tmp"
 cd "$SCRIPT_DIR"
 
 # 启动服务并立即返回（后台运行）
-pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT > "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动命令: pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT" > "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 工作目录: $(pwd)" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] PATH: $PATH" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+pnpm tools-dev start desktop --daemon-port $DAEMON_PORT --web-port $WEB_PORT >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1 &
+LAUNCH_PID=$!
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动PID: $LAUNCH_PID" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 
 print_success "启动命令已执行"
 print_info "等待服务启动..."
@@ -1230,6 +1283,11 @@ while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
     WAIT_COUNT=$((WAIT_COUNT + 2))
 
     STATUS=$(cd "$SCRIPT_DIR" && pnpm tools-dev status 2>&1)
+
+    # 每 10 秒记录一次状态到日志
+    if [ $((WAIT_COUNT % 10)) -eq 0 ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 状态检查 #$WAIT_COUNT: $STATUS" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+    fi
 
     # 检查是否真正在运行（排除 not-running）
     if echo "$STATUS" | grep -E "namespace default" | grep -v "not-running" | grep -q "running"; then
@@ -1258,6 +1316,12 @@ done
 # 超时处理
 print_error "启动超时！"
 print_info "查看日志：$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 启动超时，WAIT_COUNT=$WAIT_COUNT" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 检查后台进程..." >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+ps aux | grep -i "open.design\|tools-dev\|desktop" | grep -v grep >> "$SCRIPT_DIR/.tmp/desktop-launcher.log" 2>&1
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 检查端口 $DAEMON_PORT 和 $WEB_PORT..." >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+lsof -ti :$DAEMON_PORT 2>/dev/null && echo "daemon端口忙碌" || echo "daemon端口空闲" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
+lsof -ti :$WEB_PORT 2>/dev/null && echo "web端口忙碌" || echo "web端口空闲" >> "$SCRIPT_DIR/.tmp/desktop-launcher.log"
 osascript -e 'display notification "启动超时，请查看日志！" with title "Open Design 启动失败"' 2>/dev/null
 EOL
 
