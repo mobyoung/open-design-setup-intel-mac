@@ -7,6 +7,32 @@
 
 ---
 
+## [3.0.5] - 2026-05-15
+
+### 🐛 修复
+
+- **桌面启动器 heredoc 缺少结束标记** - install step 的 launcher heredoc（`<< EOL`）缺少对应的 `EOL` 结束行，导致 `cat` 命令将后续所有脚本内容写入 launcher 文件（约 7KB 垃圾内容），桌面图标被禁用
+- **heredoc 变量展开导致路径硬编码** - launcher heredoc 使用不带引号的 `<< EOL`，导致 `$(BASH_SOURCE[0])` 等动态表达式在写入时即被展开为安装时的固定路径。改用 `<< 'EOL'` 防止变量展开
+- **桌面启动器无法定位安装目录** - `Open Design.app` 在 `~/Desktop`，实际安装目录在 `~/Documents/open_design`，原 `.app bundle` 路径检测逻辑 `dirname` 只能上到 Desktop。新增 `~/.open_design_install_dir` 配置文件，launcher 优先从配置文件读取安装目录
+- **通过 .app 启动时 node/pnpm 找不到** - macOS 通过 `.app` 双击启动时只提供基础 PATH（`/usr/bin:/bin:/usr/sbin:/sbin`），缺少 `/usr/local/bin`。无论加 PATH 还是加载 profile 都不可靠（非交互式 shell 可能跳过 `.zshrc`）
+- **桌面应用构建移至安装脚本** - launcher 运行时尝试 `pnpm build` 因环境不完整经常失败。改为安装脚本在终端环境中预先构建，launcher 只检查产物是否存在
+
+### ♻️ 重构
+
+- **桌面启动器改为桥接模式** - launcher 从 160+ 行臃肿脚本简化为约 20 行桥接器：读取配置文件 → `open start-open-design.command`（在终端中运行，环境完整）。启动逻辑完全交给 `start-open-design.command`
+
+### 📦 文件变更
+
+- `install-open-design.command` - 多次迭代修复桌面启动器创建逻辑
+  - 插入缺失的 `EOL` 结束标记
+  - heredoc 使用单引号防止变量展开
+  - 新增 `~/.open_design_install_dir` 配置文件保存安装目录
+  - 新增桌面应用构建步骤（安装时预先构建）
+  - launcher 简化为桥接器模式
+  - 所有 `pnpm` 调用改为绝对路径 `/usr/local/bin/pnpm`
+
+---
+
 ## [3.0.4] - 2026-05-14
 
 ### 🐛 修复
